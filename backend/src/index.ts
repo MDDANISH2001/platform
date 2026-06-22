@@ -32,7 +32,7 @@ const io = new Server(httpServer, {
 
 // Socket namespaces
 registerNamespace(io, "/notifications", notificationsNamespace);
-registerNamespace(io, "/messages",      messagesNamespace);
+registerNamespace(io, "/messages", messagesNamespace);
 
 const PORT = process.env.PORT ?? 8800;
 

@@ -15,5 +15,5 @@ const tailorServiceConfigSchema = new Schema({
 
 export const TailorServiceConfig = model(
   "TailorServiceConfig",
-  tailorServiceConfigSchema
+  tailorServiceConfigSchema,
 );

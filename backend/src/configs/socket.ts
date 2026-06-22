@@ -9,7 +9,7 @@ export type NamespaceHandler = (nsp: Namespace) => void;
 export const registerNamespace = (
   io: Server,
   path: string,
-  handler: NamespaceHandler
+  handler: NamespaceHandler,
 ) => {
   const nsp = io.of(path);
   handler(nsp);

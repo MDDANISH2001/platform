@@ -13,7 +13,11 @@ const orderGroupSchema = new Schema({
     required: true,
   },
   paymentMode: { type: String, enum: ["cash"], default: "cash" },
-  paymentStatus: { type: String, enum: ["pending", "paid"], default: "pending" },
+  paymentStatus: {
+    type: String,
+    enum: ["pending", "paid"],
+    default: "pending",
+  },
   cancellationAllowed: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
 });

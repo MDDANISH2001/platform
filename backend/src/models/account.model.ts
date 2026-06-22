@@ -6,10 +6,14 @@ const accountSchema = new Schema(
     phoneNumber: { type: String, required: true, unique: true },
     email: { type: String },
     passwordHash: { type: String, required: true },
-    role: { type: String, enum: ["customer", "tailor", "admin"], required: true },
+    role: {
+      type: String,
+      enum: ["customer", "tailor", "admin"],
+      required: true,
+    },
     isActive: { type: Boolean, default: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Account = model("Account", accountSchema);

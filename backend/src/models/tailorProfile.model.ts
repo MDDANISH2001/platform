@@ -14,7 +14,7 @@ const tailorProfileSchema = new Schema(
     languages: [{ type: String }],
     isAvailable: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const TailorProfile = model("TailorProfile", tailorProfileSchema);

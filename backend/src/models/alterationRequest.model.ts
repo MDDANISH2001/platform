@@ -14,5 +14,5 @@ const alterationRequestSchema = new Schema({
 
 export const AlterationRequest = model(
   "AlterationRequest",
-  alterationRequestSchema
+  alterationRequestSchema,
 );

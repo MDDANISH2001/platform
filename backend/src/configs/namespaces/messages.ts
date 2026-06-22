@@ -44,7 +44,7 @@ export const messagesNamespace = (nsp: Namespace) => {
           message,
           createdAt: new Date().toISOString(),
         });
-      }
+      },
     );
 
     socket.on("disconnect", () => {

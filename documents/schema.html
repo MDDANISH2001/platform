@@ -1,0 +1,473 @@
+# Tailoring Platform V1 — Schema Architecture
+
+## Auth Layer
+
+### accounts
+
+Purpose:
+Single authentication system.
+
+Fields:
+
+* _id
+* fullName
+* phoneNumber (unique)
+* email
+* passwordHash
+* role → customer | tailor | admin
+* isActive
+* createdAt
+* updatedAt
+
+---
+
+## Customer Layer
+
+### customerProfiles
+
+Purpose:
+Customer-specific profile data.
+
+Fields:
+
+* _id
+* accountId (ref accounts)
+* createdAt
+* updatedAt
+
+---
+
+### addresses
+
+Purpose:
+Store multiple addresses for pickup/delivery.
+
+Fields:
+
+* _id
+* customerId (ref customerProfiles)
+* label → home | office | custom
+* fullAddress
+* city
+* state
+* pincode
+* landmark
+* isDefault
+* createdAt
+
+Relationship:
+
+One customer → many addresses
+
+---
+
+## Tailor Layer
+
+### tailorProfiles
+
+Purpose:
+Tailor operational profile.
+
+Fields:
+
+* _id
+* accountId (ref accounts)
+* shopName
+* shopAddress
+* accountStatus
+
+  * pending_approval
+  * approved
+  * inactive
+  * suspended
+* weeklyCapacityHours
+* languages[]
+* isAvailable
+* createdAt
+* updatedAt
+
+---
+
+### services
+
+Purpose:
+Global stitching catalog.
+
+Fields:
+
+* _id
+* serviceName
+* category
+* description
+* isActive
+* createdAt
+
+Examples:
+
+* suit
+* kurti
+* blouse
+
+---
+
+### tailorServiceConfigs
+
+Purpose:
+Tailor-specific pricing and workload.
+
+Fields:
+
+* _id
+* tailorId (ref tailorProfiles)
+* serviceId (ref services)
+* basePrice
+* estimatedMinHours
+* estimatedMaxHours
+
+urgencyPricing:
+
+* priorityPercent
+
+* expressPercent
+
+* updatedAt
+
+Purpose:
+
+Festival pricing changes happen here.
+
+---
+
+### deliveryZones
+
+Purpose:
+Distance-based pricing.
+
+Fields:
+
+* _id
+* tailorId
+* zoneName
+* minDistanceKm
+* maxDistanceKm
+* pickupCharge
+* deliveryCharge
+* isActive
+* createdAt
+
+Example:
+
+0–3 km → ₹40
+
+3–7 km → ₹80
+
+7–12 km → ₹120
+
+---
+
+## Order Layer
+
+### orderGroups
+
+Purpose:
+Parent order.
+
+Fields:
+
+* _id
+* customerId
+* tailorId
+* pickupAddressId
+* totalItems
+* totalAmount
+* pickupCharge
+
+deliveryMode:
+
+* deliver_together
+* deliver_separately
+
+paymentMode:
+
+* cash
+
+paymentStatus:
+
+* pending
+
+* paid
+
+* cancellationAllowed
+
+* createdAt
+
+One order group → many items
+
+No parent status stored.
+
+---
+
+### orderItems
+
+Purpose:
+Actual clothing items.
+
+Fields:
+
+* _id
+* orderGroupId
+* serviceId
+* serviceNameSnapshot
+* quantity
+* basePriceSnapshot
+
+urgencyLevel:
+
+* normal
+
+* priority
+
+* express
+
+* urgencyCharge
+
+* finalPrice
+
+* estimatedHours
+
+* requestedDeliveryDate
+
+measurementType:
+
+* manual_measurement
+* reference_cloth
+
+manualMeasurements[]:
+
+* fieldName
+* value
+
+referenceFitPreference:
+
+* same_fit
+
+* slightly_tighter
+
+* slightly_looser
+
+* custom
+
+* customNotes
+
+* itemStatus
+
+* createdAt
+
+---
+
+## Pickup Layer
+
+### pickups
+
+Purpose:
+Track cloth collection.
+
+Fields:
+
+* _id
+* orderGroupId
+* pickupDate
+* pickupTimeSlot
+
+handledBy:
+
+* ObjectId
+* ref accounts
+* nullable
+
+pickupStatus:
+
+* scheduled
+
+* completed
+
+* failed
+
+* pickupNotes
+
+* completedAt
+
+One pickup per order group.
+
+---
+
+## Delivery Layer
+
+### deliveries
+
+Purpose:
+Track stitched item delivery.
+
+Fields:
+
+* _id
+* orderItemId
+* deliveryDate
+* deliveryTimeSlot
+
+handledBy:
+
+* ObjectId
+
+* ref accounts
+
+* nullable
+
+* deliveryAttemptCount
+
+deliveryStatus:
+
+* scheduled
+
+* failed
+
+* delivered
+
+* extraDeliveryCharge
+
+* deliveryNotes
+
+* completedAt
+
+One item → many deliveries possible.
+
+---
+
+## Media Layer
+
+### media
+
+Purpose:
+Store all uploaded images.
+
+Fields:
+
+* _id
+
+linkedEntityType:
+
+* orderItem
+
+* pickup
+
+* alteration
+
+* linkedEntityId
+
+mediaType:
+
+* cloth_image
+
+* reference_cloth
+
+* pickup_verification
+
+* alteration_issue
+
+* url
+
+* uploadedBy
+
+* createdAt
+
+---
+
+## Audit Layer
+
+### orderTimeline
+
+Purpose:
+Order history.
+
+Fields:
+
+* _id
+* orderItemId
+* status
+* changedBy
+* notes
+* createdAt
+
+Example:
+
+* order placed
+* pickup scheduled
+* cloth verified
+* stitching started
+* completed
+
+Never delete timeline history.
+
+---
+
+## Alteration Layer
+
+### alterationRequests
+
+Purpose:
+Manage alteration requests.
+
+Fields:
+
+* _id
+* orderItemId
+* reason
+
+requestStatus:
+
+* requested
+
+* approved
+
+* rejected
+
+* completed
+
+* isFreeAlteration
+
+* requestedAt
+
+One item → many requests allowed.
+
+Business rule:
+
+Only first alteration free.
+
+---
+
+## Communication Layer
+
+### orderDiscussions
+
+Purpose:
+Customer-tailor communication.
+
+Fields:
+
+* _id
+* orderItemId
+
+senderType:
+
+* customer
+
+* tailor
+
+* senderId
+
+* message
+
+* createdAt
+
+No realtime chat.
+Simple discussion thread only.

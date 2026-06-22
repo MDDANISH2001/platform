@@ -1,0 +1,249 @@
+# Tailoring Platform V1 — API Architecture
+
+## Module 1 — Authentication
+
+Routes:
+
+POST /auth/register
+
+POST /auth/login
+
+POST /auth/logout
+
+GET /auth/me
+
+Flow:
+
+Create account → assign role
+
+---
+
+## Module 2 — Customer
+
+Routes:
+
+GET /customer/profile
+
+PATCH /customer/profile
+
+POST /customer/address
+
+GET /customer/address
+
+PATCH /customer/address/:id
+
+DELETE /customer/address/:id
+
+---
+
+## Module 3 — Tailor
+
+Routes:
+
+POST /tailor/register
+
+GET /tailor/profile
+
+PATCH /tailor/profile
+
+Admin routes:
+
+PATCH /admin/tailor/:id/approve
+
+PATCH /admin/tailor/:id/suspend
+
+PATCH /admin/tailor/:id/inactive
+
+---
+
+## Module 4 — Services
+
+Routes:
+
+POST /service/create
+
+GET /service/all
+
+PATCH /service/:id
+
+DELETE /service/:id
+
+Admin controlled.
+
+---
+
+## Module 5 — Tailor Service Config
+
+Routes:
+
+POST /tailor/service-config
+
+GET /tailor/service-configs
+
+PATCH /tailor/service-config/:id
+
+DELETE /tailor/service-config/:id
+
+Purpose:
+
+Set price + urgency + estimated hours
+
+---
+
+## Module 6 — Delivery Zones
+
+Routes:
+
+POST /tailor/delivery-zone
+
+GET /tailor/delivery-zones
+
+PATCH /tailor/delivery-zone/:id
+
+DELETE /tailor/delivery-zone/:id
+
+Purpose:
+
+Distance pricing.
+
+---
+
+## Module 7 — Orders
+
+Routes:
+
+POST /orders/create
+
+GET /orders/customer
+
+GET /orders/tailor
+
+GET /orders/:id
+
+DELETE /orders/:id
+
+Purpose:
+
+Create order group + order items
+
+---
+
+## Module 8 — Order Decision
+
+Routes:
+
+PATCH /orders/:id/accept
+
+PATCH /orders/:id/reject
+
+Rules:
+
+Tailor must provide rejection reason.
+
+---
+
+## Module 9 — Pickup
+
+Routes:
+
+POST /pickup/schedule
+
+PATCH /pickup/complete
+
+PATCH /pickup/fail
+
+GET /pickup/:orderId
+
+Purpose:
+
+Track cloth collection
+
+---
+
+## Module 10 — Delivery
+
+Routes:
+
+POST /delivery/schedule
+
+PATCH /delivery/complete
+
+PATCH /delivery/fail
+
+PATCH /delivery/reschedule
+
+GET /delivery/:itemId
+
+Purpose:
+
+Track delivery status
+
+---
+
+## Module 11 — Order Discussion
+
+Routes:
+
+POST /discussion/create
+
+GET /discussion/:orderItemId
+
+Purpose:
+
+Customer-tailor communication
+
+---
+
+## Module 12 — Alteration
+
+Routes:
+
+POST /alteration/request
+
+PATCH /alteration/approve
+
+PATCH /alteration/reject
+
+PATCH /alteration/complete
+
+GET /alteration/:orderItemId
+
+Rules:
+
+Only first alteration free
+
+---
+
+## Module 13 — Media Upload
+
+Routes:
+
+POST /media/upload
+
+DELETE /media/:id
+
+GET /media/:entityId
+
+Purpose:
+
+Store cloth and verification images
+
+---
+
+## Module 14 — Timeline
+
+Routes:
+
+GET /timeline/:orderItemId
+
+Internal:
+
+Every status change automatically creates timeline event.
+
+Example:
+
+Pickup completed → timeline updated
+
+Stitching started → timeline updated
+
+Delivered → timeline updated
